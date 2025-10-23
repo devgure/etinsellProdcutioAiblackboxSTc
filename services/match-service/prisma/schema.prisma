@@ -1,0 +1,74 @@
+// prisma/schema.prisma for match-service
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// User model (subset for match-service)
+model User {
+  id                 String   @id @default(auto()) @map("_id")
+  name               String
+  email              String   @unique
+  birthDate          DateTime
+  gender             String
+  photos             Photo[]
+  profile            Profile?
+
+  matchesAsUser1     Match[]  @relation("MatchUser1")
+  matchesAsUser2     Match[]  @relation("MatchUser2")
+
+  @@map("users")
+}
+
+// Profile model (subset for match-service)
+model Profile {
+  id               String   @id @default(auto()) @map("_id")
+  userId           String   @unique
+  bio              String?
+  interests        String[]
+  preferredGender  String?
+  maxDistance      Int?     @default(50)
+  minAge           Int?     @default(18)
+  maxAge           Int?     @default(100)
+  showLocation     Boolean  @default(true)
+  showAge          Boolean  @default(true)
+  relationshipType String?  @default("RELATIONSHIP")
+
+  user             User     @relation(fields: [userId], references: [id])
+
+  @@map("profiles")
+}
+
+// Photo model (subset for match-service)
+model Photo {
+  id        String   @id @default(auto()) @map("_id")
+  userId    String
+  url       String
+  isPrimary Boolean  @default(false)
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("photos")
+}
+
+// Match model
+model Match {
+  id        String   @id @default(auto()) @map("_id")
+  user1Id   String
+  user2Id   String
+  status    String   @default("pending") // pending, matched, rejected
+  createdAt DateTime @default(now())
+
+  user1     User     @relation("MatchUser1", fields: [user1Id], references: [id])
+  user2     User     @relation("MatchUser2", fields: [user2Id], references: [id])
+
+  @@unique([user1Id, user2Id])
+  @@index([user1Id])
+  @@index([user2Id])
+  @@map("matches")
+}

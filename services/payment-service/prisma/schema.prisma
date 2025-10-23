@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// Stripe Customer mapping
+model StripeCustomer {
+  id              String   @id @default(auto()) @map("_id")
+  userId          String   @unique
+  stripeCustomerId String  @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("stripe_customers")
+}
+
+// Transaction model for all payments
+model Transaction {
+  id                      String           @id @default(auto()) @map("_id")
+  userId                  String
+  type                    TransactionType
+  amount                  Float
+  currency                String           @default("usd")
+  status                  TransactionStatus @default(PENDING)
+  stripePaymentIntentId   String?
+  stripeSubscriptionId    String?
+  metadata                Json?
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+// Gift model for virtual gifts
+model Gift {
+  id          String   @id @default(auto()) @map("_id")
+  senderId    String
+  receiverId  String
+  type        String   // "rose", "champagne", "diamond"
+  costInETI   Int
+  sentAt      DateTime @default(now())
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([sentAt])
+  @@map("gifts")
+}
+
+// Super Like model
+model SuperLike {
+  id        String   @id @default(auto()) @map("_id")
+  fromUserId String
+  toUserId   String
+  createdAt DateTime @default(now())
+
+  @@unique([fromUserId, toUserId])
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@map("super_likes")
+}
+
+// User model (simplified for payment service)
+model User {
+  id                 String       @id @default(auto()) @map("_id")
+  email              String       @unique
+  name               String
+  planType           PlanType     @default(FREE)
+  subscriptionStatus SubscriptionStatus @default(ACTIVE)
+  subscriptionId     String?
+  isVerified         Boolean      @default(false)
+  hasBadge           Boolean      @default(false)
+  badgeType          BadgeType?
+  badgePurchasedAt   DateTime?
+  hasIncognito       Boolean      @default(false)
+  incognitoExpiry    DateTime?
+  canUndoSwipe       Boolean      @default(false)
+  boostUntil         DateTime?
+  geofilterLocationId String?
+  walletAddress      String?      // For $ETI token
+  tokenId            Int?         // NFT ID
+  nftTxHash          String?      // Blockchain TX for verification audit
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  stripeCustomer     StripeCustomer?
+  transactions       Transaction[]
+  sentGifts          Gift[]        @relation("GiftSender")
+  receivedGifts      Gift[]        @relation("GiftReceiver")
+  sentSuperLikes     SuperLike[]   @relation("SuperLikeSender")
+  receivedSuperLikes SuperLike[]   @relation("SuperLikeReceiver")
+
+  @@map("users")
+}
+
+// Enums
+enum TransactionType {
+  PAYMENT_INTENT
+  SUBSCRIPTION
+  PURCHASE
+  TIP
+  REFUND
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PlanType {
+  FREE
+  PREMIUM
+  GOLD
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  UNPAID
+  CANCELING
+  INACTIVE
+}
+
+enum BadgeType {
+  VERIFIED
+  SPONSORED
+  TOP_PICK
+}

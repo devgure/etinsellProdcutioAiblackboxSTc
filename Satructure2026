@@ -1,0 +1,372 @@
+//home/ikebrown/Qwen/etincelDEvOPs/RepoEmptyBlockStripFullBlockchainCAmpgrond/New2026BlcokStructur.txt
+
+
+etincel/
+├── 📁 blockchain/
+│   ├── 📁 contracts/
+│   │   ├── EtiToken.sol
+│   │   └── ProfileBadgeNFT.sol
+│   ├── 📁 scripts/
+│   │   └── deploy.ts
+│   ├── 📁 test/
+│   │   └── EtiToken.test.ts
+│   ├── 📄 hardhat.config.ts
+│   └── 📄 package.json
+|
+|
+├── 📁 client/
+│   ├── 📁 mobile-native/               # React Native (Expo + TypeScript)
+│   │   ├── 📄 App.tsx
+│   │   ├── 📁 assets/
+│   │   │   ├── 📁 images/
+│   │   │   │   └── logo.png
+│   │   │   └── 📁 fonts/
+│   │   │       └── Inter-Regular.ttf
+│   │   ├── 📁 components/
+│   │   │   ├── 📁 UI/
+│   │   │   │   ├── 📄 Button.tsx
+│   │   │   │   ├── 📄 Card.tsx
+│   │   │   │   └── 📄 Avatar.tsx
+│   │   │   └── 📁 Business/
+│   │   │       ├── 📄 SwipeCard.tsx
+│   │   │       ├── 📄 ChatBubble.tsx
+│   │   │       └── 📄 MatchIndicator.tsx
+│   │   ├── 📁 screens/
+│   │   │   ├── 📄 OnboardingScreen.tsx
+│   │   │   ├── 📄 LoginScreen.tsx
+│   │   │   ├── 📄 MatchScreen.tsx
+│   │   │   ├── 📄 SwipeScreen.tsx
+│   │   │   ├── 📄 ChatScreen.tsx
+│   │   │   └── 📄 ProfileScreen.tsx
+│   │   ├── 📁 navigation/
+│   │   │   └── 📄 RootNavigator.tsx
+│   │   ├── 📁 hooks/
+│   │   │   ├── 📄 useAuth.ts
+│   │   │   └── 📄 useLocation.ts
+│   │   ├── 📁 services/
+│   │   │   ├── 📄 apiClient.ts
+│   │   │   └── 📄 authService.ts
+│   │   ├── 📁 i18n/
+│   │   │   ├── 📄 en.json
+│   │   │   ├── 📄 es.json
+│   │   │   └── 📄 i18n.ts
+│   │   └── 📄 app.config.ts
+│   │
+│   ├── 📁 mobile-web/                   # React + Vite (PWA)
+│   │   ├── 📁 public/
+│   │   │   ├── 📄 manifest.json
+│   │   │   └── 📁 icons/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 pages/
+│   │   │   │   ├── 📄 LoginPage.tsx
+│   │   │   │   ├── 📄 DiscoverPage.tsx
+│   │   │   │   └── 📄 ChatPage.tsx
+│   │   │   ├── 📁 components/
+│   │   │   ├── 📁 services/
+│   │   │   │   └── 📄 api.ts
+│   │   │   ├── 📁 i18n/
+│   │   │   │   └── 📄 index.ts
+│   │   │   └── 📄 App.tsx
+│   │   ├── 📄 vite.config.ts
+│   │   └── 📄 index.html
+│   │
+│   └── 📁 desktop-web/                 # Next.js 14 (App Router)
+│       ├── 📁 app/
+│       │   ├── 📄 layout.tsx
+│       │   ├── 📄 page.tsx
+│       │   ├── 📄 swipe/page.tsx
+│       │   ├── 📄 chat/page.tsx
+│       │   └── 📁 api/
+│       │       └── 📄 [...proxy]/route.ts
+│       ├── 📁 public/
+│       ├── 📁 styles/
+│       │   └── 📄 globals.css
+│       ├── 📁 lib/
+│       │   ├── 📄 auth.ts
+│       │   └── 📄 i18n.ts
+│       └── 📄 next.config.js
+│
+├── 📁 gateway/
+│   ├── 📁 kong/
+│   │   ├── 📄 kong.yml
+│   │   └── 📁 plugins/
+│   │       ├── 📄 rate-limiting.conf
+│   │       └── 📄 jwt-auth.conf
+│   │
+│   └── 📁 bff-web/                      # NestJS GraphQL BFF
+│       ├── 📁 src/
+│       │   ├── 📁 controllers/
+│       │   │   ├── 📄 UserController.ts
+│       │   │   ├── 📄 MatchController.ts
+│       │   │   ├── 📄 ChatController.ts
+│       │   │   └── 📄 PaymentController.ts
+│       │   ├── 📁 services/
+│       │   │   ├── 📄 UserService.ts
+│       │   │   ├── 📄 MatchService.ts
+│       │   │   ├── 📄 ChatService.ts
+│       │   │   └── 📄 PaymentService.ts
+│       │   ├── 📁 graphql/
+│       │   │   ├── 📄 schema.graphql
+│       │   │   └── 📄 resolvers.ts
+│       │   ├── 📁 dto/
+│       │   │   ├── 📄 CreateUserDto.ts
+│       │   │   └── 📄 SwipeDto.ts
+│       │   ├── 📁 guards/
+│       │   │   └── 📄 AuthGuard.ts
+│       │   ├── 📁 interceptors/
+│       │   │   └── 📄 JwtInterceptor.ts
+│       │   └── 📄 main.ts
+│       ├── 📄 nest-cli.json
+│       ├── 📄 package.json
+│       └── 📄 Dockerfile
+│
+├── 📁 services/
+│   ├── 📁 auth-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 controllers/
+│   │   │   │   └── 📄 AuthController.ts
+│   │   │   ├── 📁 services/
+│   │   │   │   ├── 📄 AuthService.ts
+│   │   │   │   └── 📄 JwtStrategy.ts
+│   │   │   ├── 📁 entities/
+│   │   │   │   └── 📄 User.entity.ts
+│   │   │   ├── 📁 dtos/
+│   │   │   │   └── 📄 LoginDto.ts
+│   │   │   ├── 📁 guards/
+│   │   │   │   └── 📄 LocalAuthGuard.ts
+│   │   │   └── 📄 main.ts
+│   │   ├── 📄 prisma/
+│   │   │   └── 📄 schema.prisma
+│   │   ├── 📄 .env.example
+│   │   ├── 📄 package.json
+│   │   └── 📄 Dockerfile
+│   │
+│   ├── 📁 profile-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 controllers/
+│   │   │   │   └── 📄 ProfileController.ts
+│   │   │   ├── 📁 services/
+│   │   │   │   ├── 📄 ProfileService.ts
+│   │   │   │   └── 📄 PhotoService.ts
+│   │   │   ├── 📁 entities/
+│   │   │   │   ├── 📄 Photo.entity.ts
+│   │   │   │   └── 📄 Preference.entity.ts
+│   │   │   ├── 📁 dtos/
+│   │   │   │   └── 📄 UploadPhotoDto.ts
+│   │   │   └── 📄 main.ts
+│   │   ├── 📄 prisma/
+│   │   │   └── 📄 schema.prisma
+│   │   └── 📄 Dockerfile
+│   │
+│   ├── 📁 match-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 controllers/
+│   │   │   │   └── 📄 MatchController.ts
+│   │   │   ├── 📁 services/
+│   │   │   │   ├── 📄 MatchService.ts
+│   │   │   │   └── 📄 LikeService.ts
+│   │   │   ├── 📁 entities/
+│   │   │   │   ├── 📄 Match.entity.ts
+│   │   │   │   └── 📄 Like.entity.ts
+│   │   │   └── 📄 main.ts
+│   │   ├── 📄 prisma/
+│   │   │   └── 📄 schema.prisma
+│   │   └── 📄 Dockerfile
+│   │
+│   ├── 📁 chat-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 gateways/
+│   │   │   │   └── 📄 ChatGateway.ts    # Socket.IO WebSocket server
+│   │   │   ├── 📁 services/
+│   │   │   │   ├── 📄 ChatService.ts
+│   │   │   │   └── 📄 MessageService.ts
+│   │   │   ├── 📁 entities/
+│   │   │   │   ├── 📄 Chat.entity.ts
+│   │   │   │   ├── 📄 ChatUser.entity.ts
+│   │   │   │   └── 📄 Message.entity.ts
+│   │   │   └── 📄 main.ts
+│   │   ├── 📄 prisma/
+│   │   │   └── 📄 schema.prisma
+│   │   └── 📄 Dockerfile
+│   │
+│   ├── 📁 discovery-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 controllers/
+│   │   │   │   └── 📄 DiscoveryController.ts
+│   │   │   ├── 📁 services/
+│   │   │   │   └── 📄 LocationService.ts
+│   │   │   └── 📄 main.ts
+│   │   ├── 📄 prisma/
+│   │   │   └── 📄 schema.prisma
+│   │   └── 📄 Dockerfile
+│   │
+│   ├── 📁 media-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 controllers/
+│   │   │   │   └── 📄 MediaController.ts
+│   │   │   ├── 📁 services/
+│   │   │   │   └── 📄 MediaService.ts
+│   │   │   └── 📄 main.ts
+│   │   ├── 📄 prisma/
+│   │   │   └── 📄 schema.prisma
+│   │   └── 📄 Dockerfile
+│   │
+│   ├── 📁 notification-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 services/
+│   │   │   │   ├── 📄 FcmService.ts
+│   │   │   │   └── 📄 EmailService.ts
+│   │   │   └── 📄 main.ts
+│   │   └── 📄 Dockerfile
+│   │
+│   ├── 📁 payment-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 controllers/
+│   │   │   │   └── 📄 PaymentController.ts
+│   │   │   ├── 📁 services/
+│   │   │   │   ├── 📄 StripeService.ts
+│   │   │   │   └── 📄 SubscriptionService.ts
+│   │   │   ├── 📁 entities/
+│   │   │   │   └── 📄 Subscription.entity.ts
+│   │   │   └── 📄 main.ts
+│   │   ├── 📄 prisma/
+│   │   │   └── 📄 schema.prisma
+│   │   └── 📄 Dockerfile
+│   │
+│   ├── 📁 analytics-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 services/
+│   │   │   │   └── 📄 AnalyticsService.ts
+│   │   │   └── 📄 main.ts
+│   │   └── 📄 Dockerfile
+|   |
+│   ├── 📁 video-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 services/
+│   │   │   │   └── 📄 Service.ts
+│   │   │   └── 📄 main.ts
+│   │   └── 📄 Dockerfile
+|   |
+│   ├── 📁 webrtc-service/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 services/
+│   │   │   │   └── 📄 Service.ts
+│   │   │   └── 📄 main.ts
+│   │   └── 📄 D
+│   │
+│   └── 📁 ai-service/                  # Python FastAPI
+│       ├── 📁 app/
+│       │   ├── 📄 match_engine.py      # BERT + CLIP similarity
+│       │   ├── 📄 face_verification.py # OpenCV + FaceNet
+│       │   ├── 📄 moderation.py        # NSFW detection
+│       │   ├── 📄 nlp_analyzer.py     # Icebreaker gen + toxicity
+│       │   └── 📄 main.py              # FastAPI entry
+│       ├── 📄 requirements.txt
+│       ├── 📄 Dockerfile
+│       └── 📁 models/
+│           └── 📄 facenet_model.h5
+│
+│   📁├── blockchain-service/           # Web3.js + Polygon SDK
+│   │   ├── contracts/                # Solidity (.sol) — Identity NFT
+│   │   ├── src/
+│   │   │   ├── mintNFT.ts
+│   │   │   ├── verifyIdentity.ts
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   ├── location-service/             # Go + Redis Geo
+│   │   ├── main.go
+│   │   ├── Dockerfile
+│   │   └── go.mod
+├── 📁 prisma/
+│   └── 📄 schema.prisma                 # MASTER SCHEMA (copied to each service)
+│
+├── 📁 data/
+│   ├── 📁 schemas/                      # JSON validation schemas
+│   │   ├── 📄 user.schema.json
+│   │   ├── 📄 photo.schema.json
+│   │   └── 📄 message.schema.json
+│   └── 📁 migrations/
+│       └── 📄 001_init_users.sql
+│
+├── 📁 ai-engine/
+│   ├── 📁 notebooks/
+│   │   └── 📄 matching_model.ipynb
+│   ├── 📁 models/
+│   │   └── 📄 facenet_model.h5
+│   └── 📄 README.md
+│
+├── 📁 infra/
+│   ├── 📁 k8s/
+│   │   ├── 📁 deployments/
+│   │   │   ├── 📄 auth-deployment.yaml
+│   │   │   ├── 📄 profile-deployment.yaml
+│   │   │   ├── 📄 match-deployment.yaml
+│   │   │   ├── 📄 chat-deployment.yaml
+│   │   │   ├── 📄 ai-deployment.yaml
+│   │   │   └── 📄 gateway-deployment.yaml
+│   │   ├── 📁 services/
+│   │   │   └── 📄 gateway-service.yaml
+│   │   └── 📁 ingress/
+│   │       └── 📄 kong-ingress.yaml
+│   ├── 📁 terraform/
+│   │   ├── 📄 main.tf
+│   │   ├── 📄 variables.tf
+│   │   └── 📄 outputs.tf
+│   └── 📁 docker/
+│       └── 📄 docker-compose.yml
+│
+├── 📁 monitoring/
+│   ├── 📁 prometheus/
+│   │   └── 📄 prometheus.yml
+│   ├── 📁 grafana/
+│   │   └── 📁 dashboards/
+│   │       └── 📄 etincel-overview.json
+│   └── 📁 elk/
+│       └── 📄 filebeat.yml
+│
+├── 📁 tests/
+│   ├── 📁 unit/
+│   │   └── 📄 auth.service.spec.ts
+│   ├── 📁 integration/
+│   │   └── 📄 match.gateway.spec.ts
+│   └── 📁 e2e/
+│       └── 📁 cypress/
+│           └── 📄 swipe-flow.spec.ts
+│
+├── 📁 admin-dashboard/
+│   ├── 📁 src/
+│   │   ├── 📁 pages/
+│   │   │   ├── 📄 UsersPage.tsx
+│   │   │   ├── 📄 ReportsPage.tsx
+│   │   │   ├── 📄 RevenuePage.tsx
+│   │   │   └── 📄 AnalyticsPage.tsx
+│   │   ├── 📁 components/
+│   │   │   └── 📄 DataTable.tsx
+│   │   └── 📁 services/
+│   │       └── 📄 adminApi.ts
+│   └── 📄 package.json
+│
+├── 📁 scripts/
+│   ├── 📄 seed-db.ts
+│   └── 📄 backup-media.sh
+│
+├── 📁 docs/
+│   ├── 📄 ARCHITECTURE.md
+│   ├── 📄 API_SPECS.yaml
+│   └── 📄 ROADMAP.md
+│
+├── 📁 blockchain/
+│   ├── 📁 contracts/
+│   │   ├── 📄 IdentityVerifier.sol
+│   │   └── 📄 ProfileBadgeNFT.sol
+│   ├── 📁 sdk/
+│   │   └── 📄 web3.ts
+│   └── 📄 README.md
+│
+├── 📄 .gitignore
+├── 📄 docker-compose.yml
+├── 📄 Makefile
+└── 📄 README.md
+
+

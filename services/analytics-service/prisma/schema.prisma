@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum AdType {
+  BANNER
+  INTERSTITIAL
+  REWARDED
+}
+
+model AdView {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String?  @db.ObjectId
+  adType  AdType
+  shownAt DateTime @default(now())
+  clicked Boolean  @default(false)
+  revenue Float    @default(0.0)
+
+  @@index([userId])
+  @@index([adType])
+  @@index([shownAt])
+  @@map("ad_views")
+}
+
+model UserActivity {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  action     String
+  metadata   Json?
+  timestamp  DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+  @@map("user_activities")
+}
+
+model DailyMetric {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  date      DateTime @unique
+  dau       Int      @default(0)
+  mau       Int      @default(0)
+  matches   Int      @default(0)
+  messages  Int      @default(0)
+  revenue   Float    @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([date])
+  @@map("daily_metrics")
+}

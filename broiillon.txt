@@ -1,0 +1,174 @@
+soulsync/
+│
+├── 📁 client/                      
+│   ├── 📁 mobile/                 
+│   │   ├── App.tsx
+│   │   ├── app/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── navigation/
+│   │   ├── screens/
+│   │   ├── services/api.ts        
+│   │   └── i18n/                   
+│   │
+│   ├── 📁 web-mobile/             
+│   │   ├── public/
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   ├── pages/
+│   │   │   ├── hooks/
+│   │   │   ├── services/api.ts
+│   │   │   ├── i18n/
+│   │   │   └── App.tsx
+│   │   └── vite.config.ts
+│   │
+│   └── 📁 web-desktop/           
+│       ├── public/
+│       ├── src/
+│       │   ├── components/
+│       │   ├── pages/
+│       │   ├── layout/
+│       │   ├── services/api.ts
+│       │   ├── i18n/
+│       │   └── App.tsx
+│       └── next.config.js         
+│
+├── 📁 gateway/                    
+│   ├── server.js                  
+│   ├── routes/
+│   ├── middleware/auth.js
+│   ├── graphql/schema.graphql
+│   ├── docker-compose.yml
+│   └── Dockerfile
+│
+├── 📁 services/                   
+│   ├── 📁 auth-service/
+│   │   ├── src/
+│   │   │   ├── controllers/
+│   │   │   ├── routes/
+│   │   │   ├── models/User.js
+│   │   │   ├── utils/jwt.js
+│   │   │   ├── services/firebase.js
+│   │   │   └── server.js
+│   │   ├── package.json
+│   │   ├── Dockerfile
+│   │   └── k8s/deployment.yaml
+│   │
+│   ├── 📁 profile-service/
+│   │   ├── src/controllers/profile.js
+│   │   ├── src/models/Profile.js
+│   │   ├── src/routes/
+│   │   └── Dockerfile
+│   │
+│   ├── 📁 match-service/
+│   │   ├── src/algorithms/basic.js
+│   │   ├── src/routes/match.js
+│   │   └── Dockerfile
+│   │
+│   ├── 📁 chat-service/
+│   │   ├── src/server.js           # Socket.IO
+│   │   ├── src/models/Message.js
+│   │   └── Dockerfile
+│   │
+│   ├── 📁 media-service/
+│   │   ├── src/upload.js           # AWS S3 / Cloudinary
+│   │   └── Dockerfile
+│   │
+│   ├── 📁 discovery-service/
+│   │   ├── src/controllers/discovery.js
+│   │   ├── src/utils/redis-geo.js
+│   │   └── Dockerfile
+│   │
+│   ├── 📁 notification-service/
+│   │   ├── src/fcm.js              # Firebase Cloud Messaging
+│   │   └── Dockerfile
+│   │
+│   ├── 📁 analytics-service/
+│   │   ├── src/routes/analytics.js
+│   │   └── Dockerfile
+│   │
+│   └── 📁 ai-service/              # AI/ML Engine (Python)
+│       ├── app/
+│       │   ├── matching_engine.py
+│       │   ├── facial_analysis.py
+│       │   ├── nlp_processor.py
+│       │   └── predictor.py
+│       ├── requirements.txt
+│       ├── Dockerfile
+│       │
+│       ├── 📁 payment-service/
+│       ├── src/controllers/
+│       ├── src/utils/
+│       └── Dockerfile
+│     ── 📁 payment-service/             
+│      
+│
+├── 📁 data/                       # Data layer configs
+│   ├── redis.conf
+│   ├── elasticsearch-setup/
+│   │   └── mappings.json
+│   └── mongodb/                   # Migrations & seeds
+│       └── seed-users.js
+│
+├── 📁 infra/                      # Infrastructure as Code
+│   ├── k8s/
+│   │   ├── namespace.yaml
+│   │   ├── ingress.yaml
+│   │   ├── postgres-deployment.yaml
+│   │   ├── mongodb-statefulset.yaml
+│   │   ├── redis-deployment.yaml
+│   │   └── kustomization.yaml
+│   │
+│   ├── docker/
+│   │   └── docker-compose.yml     # Local dev
+│   │
+│   └── terraform/                 # AWS/GCP provisioning
+│       ├── main.tf
+│       ├── variables.tf
+│       └── eks-cluster.tf
+│
+├── 📁 monitoring/
+│   ├── prometheus.yml
+│   ├── grafana/dashboards/
+│   ├── elasticsearch/
+│   │   └── logstash.conf
+│   └── sentry.config.js
+│
+├── 📁 admin-dashboard/            # React-based Admin Panel
+│   ├── src/
+│   │   ├── pages/Users.js
+│   │   ├── pages/Reports.js
+│   │   ├── pages/Analytics.js
+│   │   └── services/adminApi.js
+│   └── Dockerfile
+│
+├── 📁 tests/
+│   ├── unit/
+│   │   ├── auth.test.js
+│   │   └── profile.test.js
+│   ├── integration/
+│   │   └── match.integration.test.js
+│   └── e2e/
+│       ├── mobile.test.js         # Detox
+│       └── web.test.js            # Cypress
+│
+├── 📁 scripts/
+│   ├── deploy.sh
+│   ├── migrate-db.js
+│   └── seed-ai-models.py
+│
+├── 📄 .gitignore
+├── 📄 README.md
+├── 📄 Makefile                    # Common commands
+└── 📄 docker-compose.yml          # For local dev (gateway + services)
+
+
+///////////////////////////////////////////////////////
+(904) 263-2739
+
+hi.mike, I am g Contractor With his guys and all Tools, 
+(ladder, rig, roller,,scaffold, power wash, spryer,, truck etc),
+ we can Start next Week By Tuesday if we have A deal, 
+ i do all type exteriore interio, industrial, remodeling, ,i am Gury,,,
+

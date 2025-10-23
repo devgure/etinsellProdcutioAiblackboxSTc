@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  GIF
+  VOICE
+  VIDEO_CALL
+  VIDEO_MESSAGE
+}
+
+model Chat {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  matchId      String?    @unique @db.ObjectId
+  messages     Message[]
+  users        ChatUser[]
+  createdAt    DateTime   @default(now())
+  lastActivity DateTime?  @default(now())
+
+  @@index([matchId])
+  @@index([lastActivity])
+  @@map("chats")
+}
+
+model ChatUser {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  chatId   String    @db.ObjectId
+  userId   String    @db.ObjectId
+  chat     Chat      @relation(fields: [chatId], references: [id])
+  lastRead DateTime?
+
+  @@unique([chatId, userId])
+  @@index([userId])
+  @@map("chat_users")
+}
+
+model Message {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  chatId        String      @db.ObjectId
+  senderId      String      @db.ObjectId
+  content       String
+  type          MessageType @default(TEXT)
+  encrypted     Boolean     @default(false)
+  encryptionKey String?
+  mediaUrl      String?
+  sentAt        DateTime    @default(now())
+  readAt        DateTime?
+  chat          Chat        @relation(fields: [chatId], references: [id])
+
+  @@index([chatId])
+  @@index([senderId])
+  @@index([sentAt])
+  @@map("messages")
+}

@@ -1,0 +1,429 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// =======================
+// ENUMS
+// =======================
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  OTHER
+}
+
+enum PlanType {
+  FREE
+  PREMIUM
+  GOLD
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  UNPAID
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  GIF
+  VOICE
+  VIDEO_CALL
+  VIDEO_MESSAGE
+}
+
+enum TransactionType {
+  SUBSCRIPTION
+  UNDO_SWIPE
+  INCOGNITO_MODE
+  VERIFIED_BADGE
+  TIP
+  GIFT
+  SPONSORED_PROFILE
+  AI_CHAT_ASSISTANT
+}
+
+enum TransactionStatus {
+  SUCCESS
+  FAILED
+  PENDING
+  REFUNDED
+}
+
+enum ReportType {
+  SPAM
+  INAPPROPRIATE_PHOTO
+  HARASSMENT
+  FAKE_PROFILE
+  OTHER
+}
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BadgeType {
+  VERIFIED
+  SPONSORED
+  TOP_PICK
+}
+
+enum AdType {
+  BANNER
+  INTERSTITIAL
+  REWARDED
+}
+
+enum VideoProfileVisibility {
+  PUBLIC
+  FOLLOWERS_ONLY
+  PRIVATE
+}
+
+// =======================
+// MODELS — UPDATED & FINAL
+// =======================
+
+model User {
+  id                 String       @id @default(auto()) @map("_id")
+  email              String       @unique
+  phone              String?      @unique
+  password           String?      // null for OAuth
+  name               String
+  bio                String?
+  birthDate          DateTime
+  gender             Gender
+  preferredGender    Gender?
+  photos             Photo[]
+  videoProfile       VideoProfile?
+  location           Json?        // GeoJSON { type: "Point", coordinates: [lon, lat] }
+  preferences        Preference?
+  isVerified         Boolean      @default(false)
+  isPremium          Boolean      @default(false)
+  planType           PlanType     @default(FREE)
+  hasBadge           Boolean      @default(false)
+  badgeType          BadgeType?
+  badgePurchasedAt   DateTime?
+  hasIncognito       Boolean      @default(false)
+  incognitoExpiry    DateTime?
+  dailySwipes        Int          @default(0)
+  lastSwipeReset     DateTime     @default(now())
+  undoCredits        Int          @default(0)
+  walletAddress      String?      // For $ETI token
+  tokenId            Int?         // NFT ID
+  nftTxHash          String?      // Blockchain TX for verification audit
+  fcmToken           String?      // Firebase Cloud Messaging token
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  // Relations
+  chats              ChatUser[]   @relation("ChatUserToUser")
+  matches            Match[]      @relation("MatchUsers")
+  sentLikes          Like[]       @relation("LikeSender")
+  receivedLikes      Like[]       @relation("LikeReceiver")
+  subscriptions      Subscription[]
+  transactions       Transaction[]
+  reports            Report[]     @relation("ReportedUser")
+  reportedBy         Report[]     @relation("ReporterUser")
+  giftsSent          Gift[]       @relation("GiftSender")
+  giftsReceived      Gift[]       @relation("GiftReceiver")
+  aiChatSessions     AIChatSession[]
+  blockedUsers       Block[]      @relation("Blocker")
+  blockedBy          Block[]      @relation("Blocked")
+  videoProfiles      VideoProfile[]
+
+  @@index([location], type: Geo) // MongoDB 2dsphere for location queries
+  @@index([email])
+  @@index([phone])
+  @@index([isPremium])
+  @@index([planType])
+  @@index([createdAt])
+  @@index([lastSwipeReset])      // For daily reset cron
+  @@index([incognitoExpiry])     // TTL index for auto-expiry
+  @@map("users")
+}
+
+model Photo {
+  id               String   @id @default(auto()) @map("_id")
+  userId           String
+  url              String
+  isMain           Boolean  @default(false)
+  facialAnalysis   Json?    // { attractiveness: 0.92, symmetry: 0.88, age: 28, hash: "a1b2c3...", verified: true }
+  moderationStatus ModerationStatus @default(PENDING)
+  uploadedAt       DateTime @default(now())
+  moderatedBy      String?  // Admin ID who approved/rejected
+  moderatedAt      DateTime?
+  user             User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([moderationStatus])
+  @@index([uploadedAt])
+  @@map("photos")
+}
+
+model VideoProfile {
+  id          String              @id @default(auto()) @map("_id")
+  userId      String              @unique
+  videoUrl    String
+  thumbnail   String?
+  caption     String?
+  duration    Int                 // seconds
+  views       Int                 @default(0)
+  likes       Int                 @default(0)
+  visibility  VideoProfileVisibility @default(PUBLIC)
+  uploadedAt  DateTime            @default(now())
+  user        User                @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([uploadedAt])
+  @@index([views])
+  @@map("video_profiles")
+}
+
+model Preference {
+  id             String   @id @default(auto()) @map("_id")
+  userId         String   @unique
+  maxDistance    Int      @default(50) // km
+  minAge         Int      @default(18)
+  maxAge         Int      @default(99)
+  showMe         Gender?
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@map("preferences")
+}
+
+model Match {
+  id         String     @id @default(auto()) @map("_id")
+  users      User[]     @relation("MatchUsers", references: [id])
+  matchedAt  DateTime   @default(now())
+  chat       Chat?      @relation(fields: [chatId], references: [id])
+  chatId     String?    // Direct link to chat for faster lookup
+
+  @@index([matchedAt])
+  @@index([chatId])      // Critical for chat ↔ match joins
+  @@map("matches")
+}
+
+model Like {
+  id        String   @id @default(auto()) @map("_id")
+  sender    User     @relation("LikeSender", fields: [senderId], references: [id])
+  receiver  User     @relation("LikeReceiver", fields: [receiverId], references: [id])
+  likedAt   DateTime @default(now())
+  senderId  String
+  receiverId String
+
+  @@unique([senderId, receiverId], name: "unique_like")
+  @@index([senderId, receiverId])
+  @@index([likedAt])
+  @@map("likes")
+}
+
+model Chat {
+  id            String       @id @default(auto()) @map("_id")
+  messages      Message[]
+  users         ChatUser[]
+  match         Match?       @relation(fields: [matchId], references: [id]) // Backlink to Match
+  matchId       String?
+  createdAt     DateTime     @default(now())
+  lastActivity  DateTime?    @default(now())
+
+  @@index([createdAt])
+  @@index([lastActivity])
+  @@index([matchId])         // Critical for match → chat
+  @@map("chats")
+}
+
+model ChatUser {
+  id       String  @id @default(auto()) @map("_id")
+  chat     Chat    @relation("ChatUserToChat", fields: [chatId], references: [id])
+  user     User    @relation("ChatUserToUser", fields: [userId], references: [id])
+  chatId   String
+  userId   String
+  lastRead DateTime?
+
+  @@unique([chatId, userId])
+  @@index([userId])
+  @@index([chatId])
+  @@map("chat_users")
+}
+
+model Message {
+  id        String       @id @default(auto()) @map("_id")
+  chatId    String
+  senderId  String
+  content   String
+  type      MessageType  @default(TEXT)
+  encrypted Boolean      @default(false)
+  encryptionKey String?  // For E2E encrypted messages
+  mediaUrl  String?
+  sentAt    DateTime     @default(now())
+  readAt    DateTime?
+  chat      Chat         @relation(fields: [chatId], references: [id])
+  sender    User         @relation(fields: [senderId], references: [id])
+
+  @@index([chatId])
+  @@index([senderId])
+  @@index([sentAt])
+  @@index([type])
+  @@map("messages")
+}
+
+model Subscription {
+  id                  String               @id @default(auto()) @map("_id")
+  userId              String
+  stripeSubscriptionId String?
+  appleTransactionId  String?
+  plan                PlanType
+  status              SubscriptionStatus
+  currentPeriodEnd    DateTime
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  user                User                 @relation(fields: [userId], references: [id])
+
+  @@index([status])
+  @@index([plan])
+  @@index([currentPeriodEnd])
+  @@index([userId])
+  @@map("subscriptions")
+}
+
+model Transaction {
+  id          String           @id @default(auto()) @map("_id")
+  userId      String
+  type        TransactionType
+  amount      Float
+  currency    String           // "USD", "ETI"
+  status      TransactionStatus @default(PENDING)
+  stripeSessionId String?
+  appleReceipt String?
+  description String?
+  createdAt   DateTime         @default(now())
+  user        User             @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+model Report {
+  id           String               @id @default(auto()) @map("_id")
+  reporter     User                 @relation("ReporterUser", fields: [reporterId], references: [id])
+  reported     User                 @relation("ReportedUser", fields: [reportedId], references: [id])
+  reporterId   String
+  reportedId   String
+  reason       String
+  content      String?              // message/photo ID
+  type         ReportType
+  createdAt    DateTime             @default(now())
+  resolved     Boolean              @default(false)
+  resolverId   String?              // Admin ID
+  resolvedAt   DateTime?
+  resolver     Admin?               @relation(fields: [resolverId], references: [id])
+
+  @@index([resolved])
+  @@index([type])
+  @@index([reportedId])
+  @@index([createdAt])
+  @@map("reports")
+}
+
+model Gift {
+  id          String   @id @default(auto()) @map("_id")
+  sender      User     @relation("GiftSender", fields: [senderId], references: [id])
+  receiver    User     @relation("GiftReceiver", fields: [receiverId], references: [id])
+  senderId    String
+  receiverId  String
+  giftType    String   // "rose", "champagne", "diamond"
+  costInETI   Int
+  sentAt      DateTime @default(now())
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([sentAt])
+  @@map("gifts")
+}
+
+model AIChatSession {
+  id        String   @id @default(auto()) @map("_id")
+  userId    String
+  sessionId String   @unique
+  messages  Json     // [{role: "user", content: "..."}, ...]
+  startedAt DateTime @default(now())
+  endedAt   DateTime?
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([sessionId])
+  @@map("ai_chat_sessions")
+}
+
+model AdView {
+  id         String   @id @default(auto()) @map("_id")
+  userId     String?
+  adType     AdType
+  shownAt    DateTime @default(now())
+  clicked    Boolean  @default(false)
+  revenue    Float    @default(0.0)
+
+  @@index([userId])
+  @@index([adType])
+  @@index([shownAt])
+  @@map("ad_views")
+}
+
+model Block {
+  id        String   @id @default(auto()) @map("_id")
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id])
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id])
+  blockerId String
+  blockedId String
+  blockedAt DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
+  @@map("blocks")
+}
+
+model Admin {
+  id        String   @id @default(auto()) @map("_id")
+  email     String   @unique
+  name      String
+  role      String   @default("MODERATOR") // "MODERATOR", "ADMIN", "SUPER_ADMIN"
+  password  String
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model AdminActionLog {
+  id          String   @id @default(auto()) @map("_id")
+  adminId     String
+  action      String   // "USER_BAN", "PHOTO_APPROVE", "GIFT_REFUND"
+  targetId    String?  // userId, photoId, etc.
+  targetType  String?  // "User", "Photo", "Transaction"
+  reason      String?
+  createdAt   DateTime @default(now())
+  admin       Admin    @relation(fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("admin_action_logs")
+}
+

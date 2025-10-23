@@ -1,0 +1,156 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:15
+    container_name: etinsell-postgres
+    environment:
+      POSTGRES_DB: etinsell
+      POSTGRES_USER: etinsell_user
+      POSTGRES_PASSWORD: etinsell_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - etinsell-network
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: etinsell-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - etinsell-network
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: etinsell-auth-service
+    environment:
+      - DATABASE_URL=postgresql://etinsell_user:etinsell_password@postgres:5432/etinsell?schema=auth
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - etinsell-network
+    volumes:
+      - ./services/auth-service:/app
+      - /app/node_modules
+
+  # Profile Service
+  profile-service:
+    build:
+      context: ./services/profile-service
+      dockerfile: Dockerfile
+    container_name: etinsell-profile-service
+    environment:
+      - DATABASE_URL=postgresql://etinsell_user:etinsell_password@postgres:5432/etinsell?schema=profile
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - REDIS_URL=redis://redis:6379
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    networks:
+      - etinsell-network
+    volumes:
+      - ./services/profile-service:/app
+      - /app/node_modules
+
+  # Match Service
+  match-service:
+    build:
+      context: ./services/match-service
+      dockerfile: Dockerfile
+    container_name: etinsell-match-service
+    environment:
+      - DATABASE_URL=postgresql://etinsell_user:etinsell_password@postgres:5432/etinsell?schema=match
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "3003:3003"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - etinsell-network
+    volumes:
+      - ./services/match-service:/app
+      - /app/node_modules
+
+  # MinIO for file storage
+  minio:
+    image: minio/minio
+    container_name: etinsell-minio
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - etinsell-network
+    command: server /data --console-address ":9001"
+
+  # Payment Service
+  payment-service:
+    build:
+      context: ./services/payment-service
+      dockerfile: Dockerfile
+    container_name: etinsell-payment-service
+    environment:
+      - DATABASE_URL=postgresql://etinsell_user:etinsell_password@postgres:5432/etinsell?schema=payment
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+      - STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+      - STRIPE_PREMIUM_PRICE_ID=price_premium_monthly
+      - STRIPE_GOLD_PRICE_ID=price_gold_monthly
+      - STRIPE_WEBHOOK_URL=https://api.etinsell.app/api/v1/payments/webhook
+    ports:
+      - "3005:3005"
+    depends_on:
+      - postgres
+    networks:
+      - etinsell-network
+    volumes:
+      - ./services/payment-service:/app
+      - /app/node_modules
+
+  # MinIO Console (optional)
+  minio-console:
+    image: minio/console
+    container_name: etinsell-minio-console
+    environment:
+      MINIO_SERVER_URL: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    ports:
+      - "9090:9090"
+    depends_on:
+      - minio
+    networks:
+      - etinsell-network
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  etinsell-network:
+    driver: bridge

@@ -1,0 +1,27 @@
+// prisma/schema.prisma for auth-service
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// User model for auth-service (subset of main schema)
+model User {
+  id                 String   @id @default(auto()) @map("_id")
+  email              String   @unique
+  phone              String?  @unique
+  password           String?
+  name               String
+  birthDate          DateTime
+  gender             String
+  isVerified         Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([email])
+  @@index([phone])
+  @@map("users")
+}

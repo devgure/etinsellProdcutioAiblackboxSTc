@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="https://jziyvpbc4esqu.ok.kimi.link">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spark - Where AI Meets Authenticity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary-dark: #1a1a1a;
+            --primary-light: #fafafa;
+            --accent-rose: #e8c4b0;
+            --accent-sage: #a8b5a0;
+            --ai-blue: #4a90e2;
+            --blockchain-purple: #8b5a9f;
+            --premium-amber: #f4a261;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, var(--accent-rose) 0%, var(--accent-sage) 100%);
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background: linear-gradient(135deg, var(--accent-rose) 0%, var(--accent-sage) 100%); }
+            50% { background: linear-gradient(135deg, var(--accent-sage) 0%, var(--accent-rose) 100%); }
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, var(--ai-blue), var(--blockchain-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .reveal-text.revealed {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s ease;
+        }
+        
+        .particle-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .compatibility-meter {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--ai-blue) 0deg 252deg, #e5e5e5 252deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .compatibility-meter::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .compatibility-score {
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--ai-blue);
+        }
+        
+        .blockchain-badge {
+            background: linear-gradient(135deg, var(--blockchain-purple), var(--ai-blue));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .ai-icon { background: linear-gradient(135deg, var(--ai-blue), var(--blockchain-purple)); }
+        .blockchain-icon { background: linear-gradient(135deg, var(--blockchain-purple), var(--premium-amber)); }
+        .security-icon { background: linear-gradient(135deg, var(--premium-amber), var(--ai-blue)); }
+        
+        .nav-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0,0,0,0.1);
+            z-index: 50;
+            padding: 1rem 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.75rem;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-item.active,
+        .nav-item:hover {
+            color: var(--ai-blue);
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-text {
+                font-size: 2.5rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Particle Background -->
+    <div id="particle-container" class="particle-bg"></div>
+    
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center hero-gradient">
+        <div class="container mx-auto px-4 py-20">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Content -->
+                <div class="text-center lg:text-left">
+                    <h1 class="font-display text-5xl lg:text-7xl font-bold text-white mb-6 reveal-text">
+                        Spark
+                    </h1>
+                    <p class="text-xl lg:text-2xl text-white/90 mb-4 reveal-text">
+                        Where AI Meets Authenticity
+                    </p>
+                    <p class="text-lg text-white/80 mb-8 max-w-lg reveal-text">
+                        Revolutionary dating powered by artificial intelligence and blockchain verification. 
+                        Find meaningful connections with unprecedented security and personalization.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start reveal-text">
+                        <button onclick="showComingSoon()" class="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+                            Download for iOS
+                        </button>
+                        <button onclick="showComingSoon()" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-gray-900 transition-colors">
+                            Download for Android
+                        </button>
+                    </div>
+                    
+                    <div class="mt-8 flex items-center justify-center lg:justify-start gap-4 reveal-text">
+                        <div class="blockchain-badge">
+                            🔒 Blockchain Verified
+                        </div>
+                        <div class="blockchain-badge">
+                            🤖 AI Powered
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Content - Hero Image -->
+                <div class="relative floating-element">
+                    <div class="rounded-3xl overflow-hidden shadow-2xl">
+                        <img src="resources/hero-couple.jpg" alt="Couple connecting through Spark" class="w-full h-auto object-cover">
+                    </div>
+                    
+                    <!-- Floating Compatibility Meter -->
+                    <div class="absolute -top-6 -right-6 compatibility-meter floating-element">
+                        <div class="compatibility-score">98%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-gray-900 mb-6 reveal-text">
+                    Revolutionary Features
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto reveal-text">
+                    Experience the future of dating with AI-powered matching, blockchain security, 
+                    and personalized insights that help you find truly compatible connections.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 feature-grid">
+                <!-- AI Matching -->
+                <div class="card-hover bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="feature-icon ai-icon">
+                        🧠
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">AI-Powered Matching</h3>
+                    <p class="text-gray-600 mb-6">
+                        Our advanced algorithms analyze personality traits, interests, and behavioral patterns 
+                        to suggest highly compatible matches with unprecedented accuracy.
+                    </p>
+                    <div class="compatibility-meter mx-auto mb-4">
+                        <div class="compatibility-score">95%</div>
+                    </div>
+                    <button onclick="demoAIMatching()" class="w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-semibold hover:bg-blue-100 transition-colors">
+                        Try AI Demo
+                    </button>
+                </div>
+                
+                <!-- Blockchain Security -->
+                <div class="card-hover bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="feature-icon blockchain-icon">
+                        ⛓️
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Blockchain Verification</h3>
+                    <p class="text-gray-600 mb-6">
+                        Every profile is verified using blockchain technology and facial recognition, 
+                        ensuring authentic connections and eliminating fake profiles.
+                    </p>
+                    <div class="text-center mb-4">
+                        <div class="blockchain-badge">
+                            ✅ Verified Secure
+                        </div>
+                    </div>
+                    <button onclick="demoBlockchain()" class="w-full bg-purple-50 text-purple-600 py-3 rounded-xl font-semibold hover:bg-purple-100 transition-colors">
+                        See Security Demo
+                    </button>
+                </div>
+                
+                <!-- Smart Conversations -->
+                <div class="card-hover bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="feature-icon security-icon">
+                        💬
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Smart Conversations</h3>
+                    <p class="text-gray-600 mb-6">
+                        AI-powered conversation assistance helps break the ice and maintain engaging 
+                        conversations with personalized suggestions and insights.
+                    </p>
+                    <div class="text-center mb-4">
+                        <div class="text-3xl font-bold text-amber-600">+73%</div>
+                        <div class="text-sm text-gray-500">Response Rate</div>
+                    </div>
+                    <button onclick="demoChatAI()" class="w-full bg-amber-50 text-amber-600 py-3 rounded-xl font-semibold hover:bg-amber-100 transition-colors">
+                        Test Chat AI
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Technology Showcase -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="font-display text-4xl lg:text-5xl font-bold text-gray-900 mb-6 reveal-text">
+                        Advanced Technology,<br>
+                        <span class="text-gradient">Human Connection</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 mb-8 reveal-text">
+                        Spark combines cutting-edge AI with blockchain security to create the most 
+                        sophisticated and secure dating experience available.
+                    </p>
+                    
+                    <div class="space-y-6 reveal-text">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span class="text-2xl">🎯</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Behavioral Analysis</h3>
+                                <p class="text-gray-600">AI learns from your interactions to improve match suggestions continuously.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span class="text-2xl">🔐</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Zero-Knowledge Proofs</h3>
+                                <p class="text-gray-600">Verify your identity without compromising personal information.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span class="text-2xl">📊</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Predictive Analytics</h3>
+                                <p class="text-gray-600">Get insights into your dating patterns and relationship compatibility.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 reveal-text">
+                        <button onclick="window.location.href='matching.html'" class="bg-gray-900 text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors">
+                            Experience Spark
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <div class="rounded-3xl overflow-hidden shadow-2xl">
+                        <img src="resources/profile-card-mockup.jpg" alt="Spark Profile Interface" class="w-full h-auto object-cover">
+                    </div>
+                    
+                    <!-- Floating Stats -->
+                    <div class="absolute -top-4 -right-4 bg-white rounded-2xl p-4 shadow-lg floating-element">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">2.4M+</div>
+                            <div class="text-sm text-gray-500">Active Users</div>
+                        </div>
+                    </div>
+                    
+                    <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl p-4 shadow-lg floating-element">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">89%</div>
+                            <div class="text-sm text-gray-500">Success Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Statistics Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-gray-900 mb-6 reveal-text">
+                    Proven Results
+                </h2>
+                <p class="text-xl text-gray-600 reveal-text">
+                    Join millions who have found meaningful connections through Spark
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center reveal-text">
+                    <div class="text-4xl lg:text-5xl font-bold text-blue-600 mb-2" data-count="2400000">0</div>
+                    <div class="text-gray-600">Active Users</div>
+                </div>
+                <div class="text-center reveal-text">
+                    <div class="text-4xl lg:text-5xl font-bold text-green-600 mb-2" data-count="89">0</div>
+                    <div class="text-gray-600">Success Rate %</div>
+                </div>
+                <div class="text-center reveal-text">
+                    <div class="text-4xl lg:text-5xl font-bold text-purple-600 mb-2" data-count="500000">0</div>
+                    <div class="text-gray-600">Matches Daily</div>
+                </div>
+                <div class="text-center reveal-text">
+                    <div class="text-4xl lg:text-5xl font-bold text-amber-600 mb-2" data-count="95">0</div>
+                    <div class="text-gray-600">AI Accuracy %</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="py-20 hero-gradient">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6 reveal-text">
+                Ready to Find Your Spark?
+            </h2>
+            <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto reveal-text">
+                Join the future of dating today and experience the power of AI-powered matching 
+                with blockchain-verified security.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center reveal-text">
+                <button onclick="showComingSoon()" class="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+                    Get Started Free
+                </button>
+                <button onclick="window.location.href='matching.html'" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-gray-900 transition-colors">
+                    Try Demo
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Bottom Navigation -->
+    <nav class="nav-bottom">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-around items-center">
+                <a href="index.html" class="nav-item active">
+                    <div class="nav-icon">🏠</div>
+                    <span>Home</span>
+                </a>
+                <a href="matching.html" class="nav-item">
+                    <div class="nav-icon">💕</div>
+                    <span>Match</span>
+                </a>
+                <a href="admin.html" class="nav-item">
+                    <div class="nav-icon">📊</div>
+                    <span>Admin</span>
+                </a>
+                <a href="#" onclick="showComingSoon()" class="nav-item">
+                    <div class="nav-icon">👤</div>
+                    <span>Profile</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Coming Soon Modal -->
+    <div id="comingSoonModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-md mx-4 text-center">
+            <div class="text-6xl mb-4">🚀</div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Coming Soon!</h3>
+            <p class="text-gray-600 mb-6">
+                Spark is launching soon! Be the first to know when we're live.
+            </p>
+            <button onclick="hideComingSoon()" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+                Got it!
+            </button>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>
