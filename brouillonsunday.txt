@@ -3,8 +3,7 @@
 describe  Tinder Mobile App in a MVp Terms 
 detailed conscise for software Developement 
 
-//////  ////////////////////////////
- Final Thought
+//////  ////////////////////////////   
 “Tinder showed us how to swipe. Aura shows us how to trust.” 
 
 This isn’t just another dating app — it’s the first decentralized,
